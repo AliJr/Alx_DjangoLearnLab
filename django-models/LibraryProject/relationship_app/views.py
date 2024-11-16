@@ -28,12 +28,12 @@ class LibraryDetailView(DetailView):
         return context
 
 # Login view
-class CustomLoginView(LoginView):
-    template_name = 'relationship_app/login.html'
+#class CustomLoginView(LoginView):
+#    template_name = 'relationship_app/login.html'
 
 # Logout view
-class CustomLogoutView(LogoutView):
-    template_name = 'relationship_app/logout.html'
+#class CustomLogoutView(LogoutView):
+#    template_name = 'relationship_app/logout.html'
 
 # Registration view
 def register(request):
