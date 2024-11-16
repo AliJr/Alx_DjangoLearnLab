@@ -4,8 +4,8 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import render
 
 def list_books(request):
-    # Fetch all books with their authors
-    books = Book.objects.select_related('author').all()
+    # Retrieve all books from the database
+    books = Book.objects.all()
     # Render the template with the books context
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
