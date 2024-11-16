@@ -18,4 +18,3 @@ urlpatterns = [
     # You can add delete_book if needed
     path('delete_book/<int:pk>/', views.delete_book, name='delete_book'),
 ]
-
