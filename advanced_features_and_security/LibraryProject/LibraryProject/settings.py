@@ -56,8 +56,28 @@ SECURE_HSTS_PRELOAD = True
 # Ensure ALLOWED_HOSTS is set correctly
 ALLOWED_HOSTS = ['your-production-domain.com']
 
-ALLOWED_HOSTS = []
+# SECURE_SSL_REDIRECT: Forces HTTP requests to be redirected to HTTPS
+SECURE_SSL_REDIRECT = True
 
+# SECURE_HSTS_SECONDS: Sets the duration for HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+
+# apply HSTS to all subdomains of the site
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# allow the site to be included in browsers' HTTP Strict Transport Security (HSTS) preload list
+SECURE_HSTS_PRELOAD = True
+
+#This ensures that session cookies are only sent over HTTPS.
+SESSION_COOKIE_SECURE = True
+# This ensures that CSRF cookies are only sent over HTTPS.
+CSRF_COOKIE_SECURE = True
+
+# This setting prevents your site from being framed, protecting against clickjacking
+X_FRAME_OPTIONS = 'DENY'
+# This prevents browsers from MIME-sniffing a response away from the declared content-type.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+# Enable this setting to activate the browser's XSS filter, helping prevent cross-site scripting attacks.
+SECURE_BROWSER_XSS_FILTER = True
 
 # Application definition
 
