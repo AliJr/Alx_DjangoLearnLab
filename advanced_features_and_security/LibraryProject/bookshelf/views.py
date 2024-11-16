@@ -52,3 +52,9 @@ def example_view(request):
         form = ExampleForm()  # Empty form for GET requests
 
     return render(request, 'bookshelf/example_form.html', {'form': form})
+
+
+
+def book_list(request):
+    books = Book.objects.all()  # Get all books from the database
+    return render(request, 'bookshelf/book_list.html', {'books': books})
