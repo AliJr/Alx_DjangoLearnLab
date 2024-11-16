@@ -1,3 +1,8 @@
+# The secure_search view uses Django ORM to prevent SQL injection attacks
+# User inputs are validated and sanitized by Django ORM's query methods
+
+
+
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required

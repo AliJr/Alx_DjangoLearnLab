@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,8 +23,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-w$gaxqjwa+*^j0schk%dm=65-6j%f6aze+c5(^r8udannb3f@l'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# CSRF_COOKIE_SECURE ensures CSRF cookies are only sent over HTTPS
+# SESSION_COOKIE_SECURE ensures session cookies are only sent over HTTPS
+# SECURE_BROWSER_XSS_FILTER enables XSS protection in modern browsers
+# X_FRAME_OPTIONS prevents the site from being embedded in an iframe (clickjacking protection)
+
+
+
+# Set DEBUG to False in production
+DEBUG = False
+
+# Secure cookie settings
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Browser security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Add Content Security Policy if django-csp is installed
+CSP_DEFAULT_SRC = ("'self'",)  # Allow content only from the same origin
+CSP_SCRIPT_SRC = ("'self'",)  # Restrict scripts to the same origin
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")  # Allow specific styles
+
+# HTTPS configuration for production
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # One year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Ensure ALLOWED_HOSTS is set correctly
+ALLOWED_HOSTS = ['your-production-domain.com']
 
 ALLOWED_HOSTS = []
 
@@ -50,6 +81,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE += [
+    'csp.middleware.CSPMiddleware',
+]
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
