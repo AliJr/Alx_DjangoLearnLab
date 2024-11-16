@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
+from .forms import ExampleForm  # <-- Add this import
 
 def index(request): return HttpResponse("Welcome to my book store.")
 
@@ -39,3 +40,15 @@ def delete_book(request, book_id):
         book.delete()
         return redirect('book_list')
     return render(request, 'relationship_app/delete_book.html', {'book': book})
+
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the valid form data
+            return render(request, 'bookshelf/thank_you.html')  # Redirect to a thank you page
+    else:
+        form = ExampleForm()  # Empty form for GET requests
+
+    return render(request, 'bookshelf/example_form.html', {'form': form})
