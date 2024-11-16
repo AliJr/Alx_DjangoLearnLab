@@ -23,8 +23,11 @@ def get_books_in_library(library_name):
 # Retrieve the librarian for a library
 def get_librarian_for_library(library_name):
     try:
+        # Fetch the library instance first
         library = Library.objects.get(name=library_name)
-        return library.librarian  # Accesses the related librarian object
+        # Use Librarian.objects.get to query directly
+        librarian = Librarian.objects.get(library=library)
+        return librarian
     except Library.DoesNotExist:
         return f"Library '{library_name}' not found."
     except Librarian.DoesNotExist:
