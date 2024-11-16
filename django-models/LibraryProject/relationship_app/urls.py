@@ -12,8 +12,10 @@ urlpatterns = [
     path('admin/', views.admin_view, name='admin_view'), # Admin view
     path('librarian/', views.librarian_view, name='librarian_view'),  # Librarian view
     path('member/', views.member_view, name='member_view'), # Member view
-    path('books/add/', views.add_book, name='add_book'),
-    path('books/edit/<int:pk>/', views.edit_book, name='edit_book'),
-    path('books/delete/<int:pk>/', views.delete_book, name='delete_book'),
+    # Other URL patterns
+    path('add_book/', views.add_book, name='add_book'),
+    path('edit_book/<int:pk>/', views.edit_book, name='edit_book'),
+    # You can add delete_book if needed
+    path('delete_book/<int:pk>/', views.delete_book, name='delete_book'),
 ]
 
