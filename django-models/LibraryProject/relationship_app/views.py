@@ -4,16 +4,10 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import render
 
 def list_books(request):
-    # Query all books with their related authors
+    # Fetch all books with their authors
     books = Book.objects.select_related('author').all()
-    
-    # Prepare a list of book titles and authors
-    book_list = [f"{book.title} by {book.author.name}" for book in books]
-    
-    # Convert the list to a simple text response
-    response_text = "\n".join(book_list)
-    
-    return HttpResponse(response_text, content_type="text/plain")
+    # Render the template with the books context
+    return render(request, 'relationship_app/list_books.html', {'books': books})
 
 
 
