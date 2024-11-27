@@ -8,6 +8,7 @@ from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 import django_filters
 from rest_framework.filters import SearchFilter
+from django_filters import rest_framework
 
 # Define a filter class for Book model
 class BookFilter(django_filters.FilterSet):
