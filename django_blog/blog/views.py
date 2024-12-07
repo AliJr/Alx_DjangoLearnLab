@@ -9,10 +9,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserCreationForm, ProfileForm, CommentForm
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
 
 
 class RegisterView(CreateView):
@@ -159,14 +160,14 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/post_detail.html'
 
     def form_valid(self, form):
-        # Associate the comment with the post and the current user
-        post = get_object_or_404(Post, pk=self.kwargs['post_pk'])
+        # Get the post using 'pk' from the URL
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])  # Use 'pk' here
         form.instance.author = self.request.user
-        form.instance.post = post
+        form.instance.post = post  # Associate the comment with the correct post
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['post_pk']})
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
     
 # Edit an existing comment
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -193,3 +194,23 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+    
+    
+def search(request):
+    query = request.GET.get('q', '')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()  # Ensure no duplicates from tags
+    else:
+        posts = Post.objects.all()
+
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
+def posts_by_tag(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = Post.objects.filter(tags=tag)
+    return render(request, 'blog/tags.html', {'posts': posts, 'tag_name': tag_name})

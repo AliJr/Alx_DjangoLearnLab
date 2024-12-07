@@ -32,4 +32,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('register/', views.RegisterView.as_view(), name='register'),
+    path('search/', views.search, name='search'),
+    path('tags/<str:tag_name>/', views.posts_by_tag, name='tag_posts'),
 ]

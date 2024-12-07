@@ -18,6 +18,11 @@
             <a href="{% url 'comment_edit' comment.pk %}">Edit</a>
             <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
         {% endif %}
+
+        <strong>Tags:</strong>
+        {% for tag in post.tags.all %}
+            <a href="{% url 'tag_posts' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
     </div>
 {% empty %}
     <p>No comments yet. Be the first to comment!</p>
