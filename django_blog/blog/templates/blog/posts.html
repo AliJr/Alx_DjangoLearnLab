@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Blog Posts - Django Blog{% endblock %}
+
+{% block content %}
+<h2>All Blog Posts</h2>
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'create_post' %}">Create New Post</a></p>
+{% else %}
+    <p><a href="{% url 'login' %}">Login</a> to create a new post.</p>
+{% endif %}
+
+{% if posts %}
+    <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a> - 
+                <span>by {{ post.author.username }} on {{ post.published_date|date:"F j, Y" }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No blog posts available. Be the first to create one!</p>
+{% endif %}
+{% endblock %}

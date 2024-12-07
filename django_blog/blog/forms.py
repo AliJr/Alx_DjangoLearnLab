@@ -16,3 +16,8 @@ class UserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['bio', 'profile_picture']
