@@ -55,7 +55,7 @@ ROOT_URLCONF = "django_blog.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / 'blog/templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -77,7 +77,7 @@ WSGI_APPLICATION = "django_blog.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "djangoblogdb",
+        "NAME": "djangoblogdb2",
         "USER": "djangoblogadmin",
         "PASSWORD": "C1sc0123",
         "HOST": "localhost",  # Set to your database host
@@ -120,13 +120,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproj ect.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "blog/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "blog/static",
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = 'blog.CustomUser'
+LOGIN_REDIRECT_URL = 'profile'

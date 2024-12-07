@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h2>User Profile</h2>
+<div class="profile-container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <label for="id_profile_picture">Profile Picture:</label><br>
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" style="max-width: 150px; max-height: 150px;">
+            {{ profile_form.profile_picture }}
+        </div>
+        <div>
+            <label for="id_first_name">First Name:</label>
+            {{ user_form.first_name }}
+        </div>
+        <div>
+            <label for="id_bio">Bio:</label>
+            {{ profile_form.bio }}
+        </div>
+        <button type="submit">Update Profile</button>
+    </form>
+</div>
+{% endblock %}
