@@ -1,0 +1,27 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Blog Posts{% endblock %}
+
+{% block content %}
+<h2>All Blog Posts</h2>
+
+<div>
+    <a href="{% url 'post_create' %}">Create New Post</a>
+</div>
+
+<ul>
+    {% for post in posts %}
+        <li>
+            <h3><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h3>
+            <p>{{ post.content|slice:":100" }}...</p>
+            <p>By {{ post.author.username }} | Published on {{ post.published_date }}</p>
+        </li>
+    {% endfor %}
+</ul>
+
+<div>
+    {% for page_num in posts.paginator.page_range %}
+        <a href="?page={{ page_num }}">{{ page_num }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

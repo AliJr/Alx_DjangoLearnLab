@@ -19,7 +19,12 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home page URL
-    path('posts/', views.posts, name='posts'),  # URL for blog posts listing
+    path('post/', views.PostListView.as_view(), name='posts'),
+    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
+    path('post/new/', views.PostCreateView.as_view(), name='post_create'),
+    path('post/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post_edit'),
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),
+    #path('posts/', views.posts, name='posts'),  # URL for blog posts listing
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('profile/', views.profile, name='profile'),

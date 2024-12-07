@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, Post
 
 
 class UserCreationForm(UserCreationForm):
@@ -21,3 +21,9 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['bio', 'profile_picture']
+        
+        
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
