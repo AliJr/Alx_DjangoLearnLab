@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth.models import User
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     bio = models.TextField(max_length=200, null=True, blank=True)
