@@ -13,7 +13,7 @@ from .models import Post, Comment
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from taggit.models import Tag
 
 class RegisterView(CreateView):
     form_class = UserCreationForm
@@ -214,3 +214,17 @@ def posts_by_tag(request, tag_name):
     tag = Tag.objects.get(name=tag_name)
     posts = Post.objects.filter(tags=tag)
     return render(request, 'blog/tags.html', {'posts': posts, 'tag_name': tag_name})
+
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list_by_tag.html'  # Create this template to display posts by tag
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        """
+        Override the default queryset to filter posts by tag.
+        """
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = Tag.objects.get(slug=tag_slug)  # Get the Tag object using the slug
+        return Post.objects.filter(tags=tag)  # Return posts that are associated with the tag
