@@ -19,6 +19,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home page URL
+    path('', views.PostListView.as_view(), name='post_list'),
     path('post/', views.PostListView.as_view(), name='posts'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
     path('post/new/', views.PostCreateView.as_view(), name='post_create'),

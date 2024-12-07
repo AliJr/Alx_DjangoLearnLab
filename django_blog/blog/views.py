@@ -9,11 +9,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserCreationForm, ProfileForm, CommentForm
-from .models import Post, Comment, Tag
+from .models import Post, Comment
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Q
 
 
 class RegisterView(CreateView):
@@ -196,6 +195,7 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
     
     
+# Search posts by title, content, or tags
 def search(request):
     query = request.GET.get('q', '')
     if query:
@@ -209,7 +209,7 @@ def search(request):
 
     return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
 
-
+# Display posts for a specific tag
 def posts_by_tag(request, tag_name):
     tag = Tag.objects.get(name=tag_name)
     posts = Post.objects.filter(tags=tag)

@@ -18,28 +18,22 @@ class UserCreationForm(UserCreationForm):
         return user
 
 class ProfileForm(forms.ModelForm):
-    tags = forms.CharField(max_length=255, required=False, help_text="Enter tags separated by commas.")
     class Meta:
         model = CustomUser
         fields = ['bio', 'profile_picture']
         
-    def clean_tags(self):
-        tags = self.cleaned_data.get('tags')
-        if tags:
-            tag_names = [tag.strip() for tag in tags.split(',')]
-            tags_objs = []
-            for name in tag_names:
-                tag, created = Tag.objects.get_or_create(name=name)
-                tags_objs.append(tag)
-            return tags_objs
-        return []
         
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content']
         
-        
+    def clean_tags(self):
+        tags = self.cleaned_data.get('tags')
+        if tags:
+            tag_list = [tag.strip() for tag in tags.split(',')]
+            return tag_list
+        return []
         
 class CommentForm(forms.ModelForm):
     class Meta:
