@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Post, Comment
+from taggit.forms import TagWidget
 
 
 class UserCreationForm(UserCreationForm):
@@ -24,6 +25,13 @@ class ProfileForm(forms.ModelForm):
         
         
 class PostForm(forms.ModelForm):
+    # This will be a CharField because we will handle the tags as a comma-separated string
+    tags = forms.CharField(
+        max_length=255, 
+        required=False, 
+        help_text="Enter tags separated by commas.", 
+        widget=TagWidget()  # Use TagWidget to handle the tags
+    )
     class Meta:
         model = Post
         fields = ['title', 'content']
@@ -34,6 +42,13 @@ class PostForm(forms.ModelForm):
             tag_list = [tag.strip() for tag in tags.split(',')]
             return tag_list
         return []
+    
+    def save(self, commit=True):
+        post = super().save(commit=False)
+        post.author = self.request.user  # Automatically set the author to the logged-in user
+        if commit:
+            post.save()
+        return post
         
 class CommentForm(forms.ModelForm):
     class Meta:
