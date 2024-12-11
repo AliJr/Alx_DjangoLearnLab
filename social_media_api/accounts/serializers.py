@@ -15,7 +15,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        # Create a new user
+        # Create a new user using the validated data
         user = get_user_model().objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
@@ -23,10 +23,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             profile_picture=validated_data.get('profile_picture', None),
         )
 
-        # Create a token for the newly created user
-        token, created = Token.objects.get_or_create(user=user)
+        # Create a token for the new user
+        token = Token.objects.create(user=user)
 
-        # You can return both the user data and the token in the response
+        # Return the user along with the token
         return user, token
 
 class LoginSerializer(serializers.Serializer):

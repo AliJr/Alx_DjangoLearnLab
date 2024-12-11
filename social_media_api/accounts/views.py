@@ -9,17 +9,17 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
-        # Use the serializer to validate and save the user
+        # Validate and save the user using the serializer
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            user, token = serializer.save()  # Save the user and token
-            # Return the user data and token in the response
+            user, token = serializer.save()  # Get both user and token
+            # Send back user details and token in the response
             return Response({
                 'id': user.id,
                 'username': user.username,
                 'bio': user.bio,
                 'profile_picture': user.profile_picture.url if user.profile_picture else None,
-                'token': token.key  # Return the token here
+                'token': token.key  # Return the token
             }, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
