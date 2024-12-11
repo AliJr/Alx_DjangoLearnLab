@@ -8,12 +8,12 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 
-User = get_user_model()
+
 
 
 # Read only view for User Serializer
 class UserView(APIView):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     
     def get(self, request):
