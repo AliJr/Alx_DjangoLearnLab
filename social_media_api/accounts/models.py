@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
+
+
 # Custom user manager.
 class UserManger(BaseUserManager):
     def create_user(self, username, password):
@@ -10,8 +12,8 @@ class UserManger(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
-    def create_superuser(self, username, password, **extra_fields): 
+
+    def create_superuser(self, username, password, **extra_fields):
         user = self.create_user(username, password)
         user.is_superuser = True
         user.is_staff = True
@@ -27,6 +29,6 @@ class User(AbstractUser):
     )
     followers = models.ManyToManyField("self", symmetrical=False, blank=True)
     objects = UserManger()
-    
+
     def __str__(self):
         return self.username

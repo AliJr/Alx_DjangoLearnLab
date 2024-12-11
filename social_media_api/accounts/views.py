@@ -1,28 +1,42 @@
-from re import U
+from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
-from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
+from .serializers import UserSerializer, RegistrationSerializer
+
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer
+
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 
 User = get_user_model()
 
 
 # Read only view for User Serializer
-class UserViewSet(ReadOnlyModelViewSet):
+class UserView(APIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
-class UserRegistrationViewSet(CreateModelMixin, GenericViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data
-            #"token": AuthToken.objects.create(user)[1]
-        })
+    def get(self, request):
+        # Only authenticated users can access this view
+        serializers = UserSerializer(request.user)
+        return Response(serializers.data)
+
+class RegistrationView(APIView):
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            token = Token.objects.create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    #serializer_class = UserSerializer
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
