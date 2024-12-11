@@ -23,12 +23,9 @@ class UserManger(BaseUserManager):
 
 # Custom user model extending AbstractUser
 class User(AbstractUser):
-    bio = models.TextField(max_length=200, null=True, blank=True)
-    profile_picture = models.ImageField(
-        upload_to="profile_pictures/", null=True, blank=True
-    )
-    followers = models.ManyToManyField("self", symmetrical=False, blank=True)
-    objects = UserManger()
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    followers = models.ManyToManyField('self', blank=True, related_name='following', symmetrical=False)
 
     def __str__(self):
         return self.username
