@@ -1,16 +1,15 @@
-from django.contrib.auth import authenticate
-from rest_framework import status, generics, views
+from rest_framework import status, generics, views, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from django.contrib.auth import get_user_model
 
 
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
     authentication_classes = []
 
     def create(self, request, *args, **kwargs):
@@ -36,7 +35,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(views.APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
     authentication_classes = []
 
     def post(self, request):
@@ -49,40 +48,55 @@ class LoginView(views.APIView):
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    queryset = get_user_model().objects.all()
+    CustomUser = get_user_model()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     lookup_field = "username"
 
 
-class FollowUserView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    
+class FollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+
     def post(self, request, user_id):
         try:
             user_to_follow = get_user_model().objects.get(id=user_id)
         except get_user_model().DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
         if user_to_follow == request.user:
-            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {"detail": "You cannot follow yourself."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Add the user to the following list
         request.user.following.add(user_to_follow)
-        return Response({"detail": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": f"You are now following {user_to_follow.username}."},
+            status=status.HTTP_200_OK,
+        )
 
-        
-class UnfollowUserView(views.APIView):
-    permission_classes = [IsAuthenticated]
+
+class UnfollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
 
     def post(self, request, user_id):
         try:
             user_to_unfollow = get_user_model().objects.get(id=user_id)
         except get_user_model().DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
         if user_to_unfollow == request.user:
-            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {"detail": "You cannot unfollow yourself."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Remove the user from the following list
         request.user.following.remove(user_to_unfollow)
-        return Response({"detail": f"You have unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": f"You have unfollowed {user_to_unfollow.username}."},
+            status=status.HTTP_200_OK,
+        )

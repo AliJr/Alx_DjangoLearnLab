@@ -9,9 +9,9 @@ from .views import RegisterView, LoginView, UserProfileView, FollowUserView, Unf
 
 urlpatterns = [
     #path('', include(router.urls)),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('profile/<str:username>/', UserProfileView.as_view(), name='profile'),
+    path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/login/', LoginView.as_view(), name='login'),
+    path('api/profile/<str:username>/', UserProfileView.as_view(), name='profile'),
     path('follow/<int:user_id>/', FollowUserView.as_view(), name='follow'),
     path('unfollow/<int:user_id>/', UnfollowUserView.as_view(), name='unfollow'),
 ]
