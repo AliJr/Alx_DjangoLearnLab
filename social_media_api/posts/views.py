@@ -1,12 +1,11 @@
-from pyexpat import model
-from django.shortcuts import render
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
-from rest_framework import viewsets
+from rest_framework import viewsets, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -37,3 +36,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Set the author to the current user when creating a comment
         serializer.save(author=self.request.user)
+
+
+class FeedView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    def get(self, request):
+        # Get the list of users that the current user is following
+        followed_users = request.user.following.all()
+        # Retrieve posts from followed users, ordered by creation date
+        posts = Post.objects.filter(author__in=followed_users).order_by("-created_at")
+        # Serialize the posts
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)

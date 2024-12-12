@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'bio', 'profile_picture', 'followers')
+        fields = ('id', 'username', 'bio', 'profile_picture', 'followers', 'following')
 
 
 class RegisterSerializer(serializers.ModelSerializer):

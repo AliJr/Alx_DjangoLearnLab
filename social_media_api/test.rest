@@ -2,9 +2,9 @@
 # Test writing a new Post using AUTH token
 Post  http://127.0.0.1:8000/api/posts/
 Content-Type: application/json
-Authorization: Token 4b338a6ed2c8d6baf3f65d4d5df7ac3ffa87d66c
+Authorization: Token df6ad40af4d861fc6c0ae5ea43f98887acf48b3a
 
-{ "title": "My Post","content": "This is the content of my post"}
+{ "title": "Reem My Post","content": "This is the content of my post"}
 
 
 ###
@@ -15,3 +15,34 @@ Content-Type: application/json
 Authorization: Token 4b338a6ed2c8d6baf3f65d4d5df7ac3ffa87d66c
 
 { "content": "Hi all","post": "1"}
+
+###
+
+POST http://127.0.0.1:8000/api/register/
+Content-Type: application/json
+
+{ "username": "Reem","password": "C1sc0123"}
+
+###
+
+
+POST http://127.0.0.1:8000/api/login/
+Content-Type: application/json
+
+{ "username": "Ali","password": "C1sc0123"}
+
+###
+POST http://127.0.0.1:8000/api/follow/6/
+Content-Type: application/json
+Authorization: Token d709e8c1ab1594c76db02a60d0bfa89267a188b3
+
+{}
+
+
+###
+
+POST http://127.0.0.1:8000/api/unfollow/3/
+Content-Type: application/json
+Authorization: Token d709e8c1ab1594c76db02a60d0bfa89267a188b3
+
+{}

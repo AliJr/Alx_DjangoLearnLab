@@ -14,6 +14,7 @@ class UserManger(BaseUserManager):
         return user
 
     def create_superuser(self, username, password, **extra_fields):
+
         user = self.create_user(username, password)
         user.is_superuser = True
         user.is_staff = True
@@ -24,8 +25,20 @@ class UserManger(BaseUserManager):
 # Custom user model extending AbstractUser
 class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    followers = models.ManyToManyField('self', blank=True, related_name='following', symmetrical=False)
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures/", blank=True, null=True
+    )
+    follower = models.ManyToManyField(
+        "self", related_name="followers", symmetrical=False, blank=True)
+    following = models.ManyToManyField(
+        "self", related_name="followings", symmetrical=False, blank=True
+    )
 
     def __str__(self):
         return self.username
+
+    def count_followers(self):
+        return self.followers.count()
+
+    def count_following(self):
+        return self.following.count()
