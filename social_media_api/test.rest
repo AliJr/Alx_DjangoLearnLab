@@ -1,0 +1,17 @@
+
+# Test writing a new Post using AUTH token
+Post  http://127.0.0.1:8000/api/posts/
+Content-Type: application/json
+Authorization: Token 4b338a6ed2c8d6baf3f65d4d5df7ac3ffa87d66c
+
+{ "title": "My Post","content": "This is the content of my post"}
+
+
+###
+# Test writing a new Post using AUTH token
+
+Post  http://127.0.0.1:8000/api/comments/
+Content-Type: application/json
+Authorization: Token 4b338a6ed2c8d6baf3f65d4d5df7ac3ffa87d66c
+
+{ "content": "Hi all","post": "1"}
