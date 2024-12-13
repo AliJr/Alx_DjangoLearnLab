@@ -59,6 +59,7 @@ class LikePostView(views.APIView):
 
     def post(self, request, pk):
         # Use get_object_or_404 to retrieve the post or return 404 if not found
+        # generics.get_object_or_404(Post, pk=pk)
         post = get_object_or_404(Post, pk=pk)
 
         user = request.user
@@ -68,9 +69,10 @@ class LikePostView(views.APIView):
             return Response({"detail": "You already liked this post."}, status=400)
 
         # Create the like
-        Like.objects.create(user=user, post=post)
+        Like.objects.get_or_create(user=request.user, post=post)
 
         # Create a notification for the post author
+        # Notification.objects.create
         notification = Notification(
             recipient=post.author,
             actor=user,
