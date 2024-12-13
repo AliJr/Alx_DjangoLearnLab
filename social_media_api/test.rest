@@ -46,3 +46,10 @@ Content-Type: application/json
 Authorization: Token d709e8c1ab1594c76db02a60d0bfa89267a188b3
 
 {}
+
+
+###
+
+POST http://127.0.0.1:8000/api/like/1/
+Content-Type: application/json
+Authorization: Token df6ad40af4d861fc6c0ae5ea43f98887acf48b3a

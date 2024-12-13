@@ -7,6 +7,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -42,6 +43,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class FeedView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
+
     def get(self, request):
         # Get the list of users that the current user is following
         following_users = request.user.following.all()
@@ -51,46 +53,50 @@ class FeedView(views.APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-class LikeView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
 
-    def post(self, request, post_id):
-        try:
-            post = Post.objects.get(id=post_id)
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-        # check if user has already liked the post
-        if Like.objects.filter(post=post, user=request.user).exists():
-            return Response({"detail": "Post already liked."}, status=status.HTTP_400_BAD_REQUEST)
-        # Create a like
-        Like.objects.get_or_create(post=post, user=request.user)
-        # Create a notification
-        Notification.objects.create(
-            recipient = post.author, # recipient is the author of the post
-            actor = request.user, # actor is the user who liked the post
-            verb = "liked",
-            target_content_type = ContentType.objects.get_for_model(Post),
-            target_object_id = post.id,
-            target = post,
+class LikePostView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        # Use get_object_or_404 to retrieve the post or return 404 if not found
+        post = get_object_or_404(Post, pk=pk)
+
+        user = request.user
+
+        # Prevent the user from liking a post multiple times
+        if Like.objects.filter(user=user, post=post).exists():
+            return Response({"detail": "You already liked this post."}, status=400)
+
+        # Create the like
+        Like.objects.create(user=user, post=post)
+
+        # Create a notification for the post author
+        notification = Notification(
+            recipient=post.author,
+            actor=user,
+            verb="liked",
+            target_content_type=ContentType.objects.get_for_model(post),
+            target_object_id=post.id
         )
-        
-        return Response({"detail": "Post liked successfully."}, status=status.HTTP_200_OK)
-    
-class UnlikeView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+        notification.save()
 
-    def post(self, request, post_id):
-        try:
-            post = Post.objects.get(id=post_id)
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-        # check if user has already liked the post
-        like = Like.objects.filter(post=post, user=request.user)
-        if not like.exists():
-            return Response({"detail": "Post not liked."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        Like.delete()
-        return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Post liked successfully."})
+
+class UnlikePostView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        # Use get_object_or_404 to retrieve the post or return 404 if not found
+        post = get_object_or_404(Post, pk=pk)
+
+        user = request.user
+
+        # Prevent the user from unliking a post they haven't liked
+        like = Like.objects.filter(user=user, post=post).first()
+        if not like:
+            return Response({"detail": "You haven't liked this post."}, status=400)
+
+        # Remove the like
+        like.delete()
+
+        return Response({"detail": "Post unliked successfully."})

@@ -7,6 +7,7 @@ class Notification(models.Model):
     recipient = models.ForeignKey('accounts.User',related_name='recipient', on_delete=models.CASCADE)
     actor = models.ForeignKey('accounts.User',related_name='actor', on_delete=models.CASCADE)
     verb = models.CharField(max_length=255)
+# For generic relations to post, comment, or follow actions
     target_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     target_object_id = models.PositiveIntegerField()
     target = GenericForeignKey('target_content_type', 'target_object_id')
